@@ -13,21 +13,20 @@ router.route('/techs')
   .get((req, res) => {
     console.log('[GET /techs]', req.query)
     var fullUrl = req.protocol + '://' + req.get('host') + '/api' + req.path;
-    var start =  req.query.start && { $lt: new Date(req.query.start) }
-    var query = {
-      pub_date: start || { $lt: Date.now() }
-    }
+    var page =  req.query.page ? Number(req.query.page) : 1
 
-    Tech.find(query)
-      .limit(10)
+    Tech.find()
       .sort('-pub_date')
+      .skip((page - 1) * 10)
+      .limit(10)
       .exec((err, techs) => {
         if (err)
           res.send(err)
 
         var response = {
           data: {
-            next: fullUrl + '?' + 'start=' + new Date(techs[techs.length - 1].pub_date).toJSON(),
+            next: fullUrl + '?' + 'page=' + (page + 1),
+            prev: page === 1 ? undefined : fullUrl + '?' + 'page=' + (page - 1),
             techs: techs
           }
         }
