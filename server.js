@@ -14,7 +14,13 @@ router.route('/techs')
       if (err)
         res.send(err)
 
-      res.json(techs)
+      var response = {
+        data: {
+          techs: techs
+        }
+      }
+
+      res.json(response)
     })
   })
 
