@@ -14,7 +14,7 @@ var router = express.Router()
 router.route('/techs')
   .get((req, res) => {
     console.log('[GET /techs]', req.query)
-    var fullUrl = req.protocol + '://' + req.get('host') + '/api' + req.path;
+    var fullUrl = 'https://' + req.get('host') + '/api' + req.path;
     var page =  req.query.page ? Number(req.query.page) : 1
 
     Tech.find()
