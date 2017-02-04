@@ -14,21 +14,23 @@ var router = express.Router()
 router.route('/techs')
   .get((req, res) => {
     console.log('[GET /techs]', req.query)
-    var fullUrl = 'https://' + req.get('host') + '/api' + req.path;
-    var page =  req.query.page ? Number(req.query.page) : 1
-
-    Tech.find()
-      .sort('-pub_date')
-      .skip((page - 1) * 10)
+    var url = 'https://' + req.get('host') + '/api' + req.path;
+    var start =  req.query.start && { $lt: new Date(req.query.start) }
+    var query = {
+      pub_date: start || { $lt: Date.now() }
+    }
+    Tech.find(query)
       .limit(10)
+      .sort('-pub_date')
       .exec((err, techs) => {
         if (err)
           res.send(err)
 
+        var start = new Date(techs[techs.length - 1].pub_date).toJSON()
+
         var response = {
           data: {
-            next: fullUrl + '?' + 'page=' + (page + 1),
-            prev: page === 1 ? undefined : fullUrl + '?' + 'page=' + (page - 1),
+            next: url + '?' + 'start=' + start,
             techs: techs
           }
         }
