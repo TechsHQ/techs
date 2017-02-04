@@ -19,6 +19,7 @@ router.route('/techs')
     var query = {
       pub_date: start || { $lt: Date.now() }
     }
+
     Tech.find(query)
       .limit(10)
       .sort('-pub_date')
@@ -26,16 +27,27 @@ router.route('/techs')
         if (err)
           res.send(err)
 
-        var start = new Date(techs[techs.length - 1].pub_date).toJSON()
+        var start = techs.length && new Date(techs[techs.length - 1].pub_date).toJSON()
 
-        var response = {
-          data: {
-            next: url + '?' + 'start=' + start,
-            techs: techs
+        if (start) {
+          var response = {
+            data: {
+              next: url + '?' + 'start=' + start,
+              techs: techs
+            }
           }
+          res.json(response)
+        } else {
+          var response = {
+            error: {
+              code: 404,
+              message: 'Something went wrong...'
+            }
+          }
+          res.status(404).json(response)
         }
-        res.json(response)
       })
+
   })
 
 app.use('/api', router)
