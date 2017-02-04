@@ -1,9 +1,11 @@
 var express = require('express')
 var mongoose = require('mongoose')
+var cors = require('cors')
 var Tech = require('./app/models/tech')
 
 var port = process.env.PORT || 8080
 var app = express()
+app.use(cors())
 
 mongoose.connect(process.env.MONGODB_URI)
 mongoose.Promise = global.Promise
