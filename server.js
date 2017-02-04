@@ -21,7 +21,7 @@ router.route('/techs')
     }
 
     Tech.find(query)
-      .limit(10)
+      .limit(30)
       .sort('-pub_date')
       .exec((err, techs) => {
         if (err)
@@ -41,7 +41,7 @@ router.route('/techs')
           var response = {
             error: {
               code: 404,
-              message: 'Something went wrong...'
+              message: 'No more tech blogs...'
             }
           }
           res.status(404).json(response)
