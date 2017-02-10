@@ -15,9 +15,12 @@ router.route('/techs')
   .get((req, res) => {
     console.log('[GET /techs]', req.query)
     var url = 'https://' + req.get('host') + '/api' + req.path;
-    var start =  req.query.start && { $lt: new Date(req.query.start) }
+    if (new Date(req.query.start) == 'Invalid Date')
+      var start = { $lt: Date.now() }
+    else
+      var start = { $lt: new Date(req.query.start) }
     var query = {
-      pub_date: start || { $lt: Date.now() }
+      pub_date: start
     }
 
     Tech.find(query)
@@ -51,4 +54,6 @@ router.route('/techs')
   })
 
 app.use('/api', router)
-app.listen(port)
+app.listen(port, () => {
+  console.log('Server listening on port', port + '!')
+})
